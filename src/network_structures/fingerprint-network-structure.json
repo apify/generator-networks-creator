@@ -1,0 +1,72 @@
+{
+  "nodes": [
+    {
+      "name": "cookiesEnabled",
+      "parentNames": []
+    },
+    {
+      "name": "timezone",
+      "parentNames": []
+    },
+    {
+      "name": "timezoneOffset",
+      "parentNames": ["timezone"]
+    },
+    {
+      "name": "userAgent",
+      "parentNames": []
+    },
+    {
+      "name": "accelerometerUsed",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "pluginCharacteristics",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "audioCodecs",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "videoCodecs",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "battery",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "videoCard",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "deviceMemory",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "productSub",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "hardwareConcurrency",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "vendor",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "multimediaDevices",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "screenCharacteristics",
+      "parentNames": ["userAgent"]
+    },
+    {
+      "name": "platform",
+      "parentNames": ["userAgent"]
+    }
+  ]
+}
