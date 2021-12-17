@@ -4,6 +4,6 @@ const GeneratorNetworksCreator = require("./src/generator-networks-creator.js");
 Apify.main(async () => {
     console.log("Generating fingerprint generator files");
     const generatorNetworksCreator = new GeneratorNetworksCreator();
-    await generatorNetworksCreator.prepareFingerprintGeneratorFiles();
+    await generatorNetworksCreator.prepareFingerprintGeneratorFiles("src/datasets/dataset_minimal.json", "results");
     console.log("Done");
 });

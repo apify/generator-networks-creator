@@ -4,21 +4,14 @@ const parse = require('csv-parse/lib/sync');
 const fs = require("fs");
 const path = require("path");
 
-const headerDatasetPath = path.join(__dirname, "datasets", "dataset.json");
-const fingerprintDatasetPath = path.join(__dirname, "datasets", "dataset.json");
-
 const headerNetworkStructurePath = path.join(__dirname, "network_structures", "header-network-structure.json");
 const headerNetworkStructure = require(headerNetworkStructurePath);
-const headerNetworkDefinitionPath = path.join(__dirname, "..", "results", "header-network-definition.json");
 
 const inputNetworkStructurePath = path.join(__dirname, "network_structures", "input-network-structure.json");
 const inputNetworkStructure = require(inputNetworkStructurePath);
-const inputNetworkDefinitionPath = path.join(__dirname, "..", "results", "input-network-definition.json");
 
 const fingerprintNetworkStructurePath = path.join(__dirname, "network_structures", "fingerprint-network-structure.json");
 const fingerprintNetworkStructure = require(fingerprintNetworkStructurePath);
-const fingerprintNetworkDefinitionPath = path.join(__dirname, "..", "results", "fingerprint-network-definition.json");
-const browserHelperFilePath = path.join(__dirname, "..", "results", "browser-helper-file.json");
 
 const browserHttpNodeName = '*BROWSER_HTTP';
 const httpVersionNodeName = "*HTTP_VERSION";
@@ -129,12 +122,12 @@ async function prepareRecords(records, preprocessingType) {
 
 class GeneratorNetworksCreator {
 
-    async prepareHeaderGeneratorFiles() {
+    async prepareHeaderGeneratorFiles(datasetPath, resultsPath) {
         /*
             Danfo-js can't read CSVs where field values contain a newline right now, the replace was added to deal with
             issue described in https://github.com/adaltas/node-csv-parse/issues/139
         */
-        const datasetText = fs.readFileSync(headerDatasetPath, {encoding:'utf8'}).replace(/^\ufeff/, '');
+        const datasetText = fs.readFileSync(datasetPath, {encoding:'utf8'}).replace(/^\ufeff/, '');
         let records = await prepareRecords(JSON.parse(datasetText), "headers");
 
         let inputGeneratorNetwork = new BayesianNetwork(inputNetworkStructure);
@@ -199,6 +192,10 @@ class GeneratorNetworksCreator {
         await headerGeneratorNetwork.setProbabilitiesAccordingToData(selectedHeaders);
         await inputGeneratorNetwork.setProbabilitiesAccordingToData(selectedHeaders);
 
+        const inputNetworkDefinitionPath = path.join(resultsPath, "input-network-definition.json");
+        const headerNetworkDefinitionPath = path.join(resultsPath, "header-network-definition.json");
+        const browserHelperFilePath = path.join(resultsPath, "browser-helper-file.json");
+
         headerGeneratorNetwork.saveNetworkDefinition(headerNetworkDefinitionPath);
         inputGeneratorNetwork.saveNetworkDefinition(inputNetworkDefinitionPath);
 
@@ -206,8 +203,8 @@ class GeneratorNetworksCreator {
         fs.writeFileSync(browserHelperFilePath, JSON.stringify(uniqueBrowsersAndHttps));
     }
 
-    async prepareFingerprintGeneratorFiles() {
-        const datasetText = fs.readFileSync(fingerprintDatasetPath, {encoding:'utf8'}).replace(/^\ufeff/, '');
+    async prepareFingerprintGeneratorFiles(datasetPath, resultsPath) {
+        const datasetText = fs.readFileSync(datasetPath, {encoding:'utf8'}).replace(/^\ufeff/, '');
         let records = await prepareRecords(JSON.parse(datasetText), "fingerprints");
         for(let x = 0; x < records.length; x++) {
             let record = records[x];
@@ -244,13 +241,14 @@ class GeneratorNetworksCreator {
             records[x] = record;
         }
 
-
         let fingerprintGeneratorNetwork = new BayesianNetwork(fingerprintNetworkStructure);
         let desiredFingerprintAttributes = Object.keys(fingerprintGeneratorNetwork.nodesByName);
         let fingerprints = new dfd.DataFrame(records);
 
         let selectedFingerprints = fingerprints.loc({ columns: desiredFingerprintAttributes });
         selectedFingerprints.fillna({ values: [ missingValueDatasetToken ], inplace: true });
+
+        const fingerprintNetworkDefinitionPath = path.join(__dirname, "..", "results", "fingerprint-network-definition.json");
 
         await fingerprintGeneratorNetwork.setProbabilitiesAccordingToData(selectedFingerprints);
         fingerprintGeneratorNetwork.saveNetworkDefinition(fingerprintNetworkDefinitionPath);
