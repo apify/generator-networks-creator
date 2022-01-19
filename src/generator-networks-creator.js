@@ -31,16 +31,9 @@ const STRINGIFIED_PREFIX = '*STRINGIFIED*';
 
 
 const PLUGIN_CHARACTERISTICS_ATTRIBUTES = [
-    "pluginsSupport",
     "plugins",
     "mimeTypes"
 ];
-const SCREEN_CHARACTERISTICS_ATTRIBUTES = [
-    "screenResolution",
-    "availableScreenResolution",
-    "colorDepth",
-    "touchSupport"
-]
 
 async function prepareRecords(records, preprocessingType) {
     let cleanedRecords = [];
@@ -218,20 +211,10 @@ class GeneratorNetworksCreator {
                 }
             }
 
-            record["pluginCharacteristics"] = pluginCharacteristics != {} ? pluginCharacteristics : missingValueDatasetToken;
-
-            let screenCharacteristics = {};
-            for(let screenCharacteristicsAttribute of SCREEN_CHARACTERISTICS_ATTRIBUTES) {
-                if(screenCharacteristicsAttribute in record && record[screenCharacteristicsAttribute] != "") {
-                    screenCharacteristics[screenCharacteristicsAttribute] = record[screenCharacteristicsAttribute];
-                    delete record[screenCharacteristicsAttribute];
-                }
-            }
-
-            record["screenCharacteristics"] = screenCharacteristics != {} ? screenCharacteristics : missingValueDatasetToken;
+            record["pluginsData"] = pluginCharacteristics != {} ? pluginCharacteristics : missingValueDatasetToken;
 
             for(const attribute in record) {
-                if(record[attribute] == "") {
+                if(record[attribute] === "") {
                     record[attribute] = missingValueDatasetToken;
                 } else {
                     record[attribute] = (typeof record[attribute] === 'string' || record[attribute] instanceof String) ? record[attribute] : (STRINGIFIED_PREFIX + JSON.stringify(record[attribute]));
