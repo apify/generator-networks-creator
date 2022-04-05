@@ -6,7 +6,7 @@
     },
     {
       "name": "userAgentData",
-      "parentNames": []
+      "parentNames": ["userAgent"]
     },
     {
       "name": "appCodeName",

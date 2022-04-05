@@ -35,6 +35,10 @@ const PLUGIN_CHARACTERISTICS_ATTRIBUTES = [
     "mimeTypes"
 ];
 
+function isEdge(browserAndVersion) {
+    return browserAndVersion.startsWith("edg");
+}
+
 async function prepareRecords(records, preprocessingType) {
     let cleanedRecords = [];
     for(let x = 0; x < records.length; x++) {
@@ -161,9 +165,17 @@ class GeneratorNetworksCreator {
             }
 
             let browser = missingValueDatasetToken;
-            let matches = userAgent.match(/(firefox|chrome|safari)\/([0-9.]*)/gi);
+            let matches = userAgent.match(/(firefox|chrome|safari|edg(a|ios|e)?)\/([0-9.]*)/gi);
             if(matches && !(/OPR\/[0-9.]*/.test(userAgent))) {
-                browser = matches[0];
+                for(let match of matches) {
+                    if(isEdge(match)) {
+                        browser = "edge/" + match.split("/")[1];
+                        break;
+                    }
+                }
+                if(browser == missingValueDatasetToken) {
+                    browser = matches[0];
+                }
             }
 
             browsers.push(browser);
